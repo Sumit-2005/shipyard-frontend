@@ -1,4 +1,4 @@
-const API_URL = "https://shipyard-backend-lwjl.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("access_token");
