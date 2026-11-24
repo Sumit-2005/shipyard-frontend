@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://shipyard-backend-wni0.onrender.com";
 
 // Login
 export async function loginUser(email, password) {
