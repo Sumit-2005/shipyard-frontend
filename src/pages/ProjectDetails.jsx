@@ -129,115 +129,131 @@ function ProjectDetails() {
   const issues = issuesQuery.data;
 
   return (
-    <div>
-      <div className="project-header">
-        <h1 className="project-title">{project.overview}</h1>
+    <div className="project-details-page">
+      <main className="project-details-content">
+        <div className="project-header">
+          <h1 className="project-title">{project.overview}</h1>
 
-        <p className="project-deployment">Deployment: {project.deployment}</p>
+          <p className="project-deployment">Deployment: {project.deployment}</p>
 
-        <p className="project-id">Project ID: {project.id}</p>
-      </div>
+          <p className="project-detail-id">Project ID: {project.id}</p>
+        </div>
 
-      <section>
-        <h2>Create New Issue</h2>
+        <section className="project-details-section">
+          <h2>Create New Issue</h2>
 
-        <form onSubmit={handleCreateIssue}>
-          <input
-            type="text"
-            placeholder="Issue title"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-          />
+          <form className="issue-form" onSubmit={handleCreateIssue}>
+            <input
+              type="text"
+              placeholder="Issue title"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+            />
 
-          <select
-            value={priority}
-            onChange={(e) => setPriority(Number(e.target.value))}
-          >
-            <option value={1}>High</option>
-            <option value={2}>Medium</option>
-            <option value={3}>Low</option>
-          </select>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(Number(e.target.value))}
+            >
+              <option value={1}>High</option>
+              <option value={2}>Medium</option>
+              <option value={3}>Low</option>
+            </select>
 
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Closed">Closed</option>
-          </select>
+            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Closed">Closed</option>
+            </select>
 
-          <button type="submit" disabled={createIssueMutation.isPending}>
-            {createIssueMutation.isPending ? "Creating..." : "Create Issue"}
-          </button>
-        </form>
-        {createIssueMutation.isError && (
-          <p>{createIssueMutation.error.message}</p>
-        )}
-      </section>
-      <section>
-        <h2>Issues</h2>
+            <button type="submit" disabled={createIssueMutation.isPending}>
+              {createIssueMutation.isPending ? "Creating..." : "Create Issue"}
+            </button>
+          </form>
+          {createIssueMutation.isError && (
+            <p>{createIssueMutation.error.message}</p>
+          )}
+        </section>
+        <section className="project-details-section">
+          <h2>Issues</h2>
 
-        {issues.length === 0 ? (
-          <p>No issues found for this project.</p>
-        ) : (
-          issues.map((issue) => (
-            <div key={issue.id}>
-              {editingIssueId === issue.id ? (
-                <form onSubmit={handleUpdateIssue}>
-                  <input
-                    type="text"
-                    value={editLabel}
-                    onChange={(e) => setEditLabel(e.target.value)}
-                  />
+          {issues.length === 0 ? (
+            <p className="section-message">No issues found for this project.</p>
+          ) : (
+            <div className="issue-list">
+              {issues.map((issue) => (
+                <div className="issue-card" key={issue.id}>
+                  {editingIssueId === issue.id ? (
+                    <form
+                      className="issue-edit-form"
+                      onSubmit={handleUpdateIssue}
+                    >
+                      <input
+                        type="text"
+                        value={editLabel}
+                        onChange={(e) => setEditLabel(e.target.value)}
+                      />
 
-                  <select
-                    value={editPriority}
-                    onChange={(e) => setEditPriority(Number(e.target.value))}
-                  >
-                    <option value={1}>High</option>
-                    <option value={2}>Medium</option>
-                    <option value={3}>Low</option>
-                  </select>
+                      <select
+                        value={editPriority}
+                        onChange={(e) =>
+                          setEditPriority(Number(e.target.value))
+                        }
+                      >
+                        <option value={1}>High</option>
+                        <option value={2}>Medium</option>
+                        <option value={3}>Low</option>
+                      </select>
 
-                  <select
-                    value={editStatus}
-                    onChange={(e) => setEditStatus(e.target.value)}
-                  >
-                    <option value="Open">Open</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Closed">Closed</option>
-                  </select>
+                      <select
+                        value={editStatus}
+                        onChange={(e) => setEditStatus(e.target.value)}
+                      >
+                        <option value="Open">Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Closed">Closed</option>
+                      </select>
 
-                  <button
-                    type="submit"
-                    disabled={updateIssueMutation.isPending}
-                  >
-                    {updateIssueMutation.isPending ? "Saving..." : "Save"}
-                  </button>
+                      <button
+                        type="submit"
+                        disabled={updateIssueMutation.isPending}
+                      >
+                        {updateIssueMutation.isPending ? "Saving..." : "Save"}
+                      </button>
 
-                  <button type="button" onClick={() => setEditingIssueId(null)}>
-                    Cancel
-                  </button>
-                </form>
-              ) : (
-                <>
-                  <div className="issue-detail">
-                    <h3>{issue.label}</h3>
-                    <p>Status: {issue.status}</p>
-                    <p>Priority: {issue.priority}</p>
-                  </div>
-                  <button onClick={() => handleEditIssue(issue)}>Edit</button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingIssueId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </form>
+                  ) : (
+                    <>
+                      <div className="issue-detail">
+                        <h3>{issue.label}</h3>
+                        <p>Status: {issue.status}</p>
+                        <p>Priority: {issue.priority}</p>
+                      </div>
+                      <div className="issue-actions">
+                        <button onClick={() => handleEditIssue(issue)}>
+                          Edit
+                        </button>
 
-                  <button
-                    onClick={() => handleDeleteIssue(issue.id)}
-                    disabled={deleteIssueMutation.isPending}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
+                        <button
+                          onClick={() => handleDeleteIssue(issue.id)}
+                          disabled={deleteIssueMutation.isPending}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
-          ))
-        )}
-      </section>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
