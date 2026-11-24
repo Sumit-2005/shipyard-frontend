@@ -8,6 +8,7 @@ import {
   updateIssue,
 } from "../api/issues";
 import { useState } from "react";
+import { ThemeToggle } from "../context/ThemeContext";
 
 function ProjectDetails() {
   const [label, setLabel] = useState("");
@@ -131,6 +132,9 @@ function ProjectDetails() {
   return (
     <div className="project-details-page">
       <main className="project-details-content">
+        <div className="project-details-toolbar">
+          <ThemeToggle />
+        </div>
         <div className="project-header">
           <h1 className="project-title">{project.overview}</h1>
 

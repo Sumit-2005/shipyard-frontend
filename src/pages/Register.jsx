@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { registerUser } from "../api/auth";
+import { ThemeToggle } from "../context/ThemeContext";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -26,9 +27,12 @@ function Register() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-logo">
-          Shipyard<span>.</span>
-        </h1>
+        <div className="auth-brand-row">
+          <h1 className="auth-logo">
+            Shipyard<span>.</span>
+          </h1>
+          <ThemeToggle />
+        </div>
 
         <h2 className="auth-title">Create an account</h2>
 

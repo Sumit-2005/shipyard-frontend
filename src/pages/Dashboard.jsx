@@ -5,6 +5,7 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { apiRequest } from "../api/client";
 import { createProject, updateProject, deleteProject } from "../api/projects";
 import { useAuth } from "../context/AuthContext";
+import { ThemeToggle } from "../context/ThemeContext";
 
 function Dashboard() {
   const { logout } = useAuth();
@@ -131,6 +132,7 @@ function Dashboard() {
         </h1>
 
         <div className="navbar-user-actions">
+          <ThemeToggle />
           <div className="user-info-card">
             <div className="user-avatar">
               {user.email.charAt(0).toUpperCase()}

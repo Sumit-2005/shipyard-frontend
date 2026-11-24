@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 :root {
+  color-scheme: light;
   font-family: "DM Sans", sans-serif;
   color: #172033;
   background: #f6f8fc;
@@ -957,4 +958,251 @@ a {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Theme control */
+
+.auth-brand-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.auth-brand-row .auth-logo {
+  margin-bottom: 36px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  min-height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 11px;
+  color: #536078;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 650;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-color: #dce5ff;
+}
+
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.project-details-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 560px) {
+  .theme-toggle-label {
+    display: none;
+  }
+
+  .theme-toggle {
+    width: 38px;
+    padding: 8px;
+  }
+}
+
+/* Dark theme */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-ink: #e7edf7;
+  --color-muted: #a8b4c7;
+  --color-subtle: #8492a8;
+  --color-border: #2b384d;
+  --color-primary: #91adff;
+  --color-primary-hover: #a9bdff;
+  --color-primary-soft: #202d49;
+  --color-surface: #151f2f;
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+:root[data-theme="dark"] body {
+  color: var(--color-ink);
+  background: #0d1420;
+}
+
+[data-theme="dark"] .dashboard,
+[data-theme="dark"] .project-details-page {
+  background:
+    radial-gradient(ellipse at 50% 0, rgba(42, 63, 105, 0.2), transparent 48%),
+    #0d1420;
+}
+
+[data-theme="dark"] .auth-container {
+  background:
+    radial-gradient(ellipse at 50% 0, rgba(42, 63, 105, 0.28), transparent 52%),
+    #0d1420;
+}
+
+[data-theme="dark"] .auth-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .auth-logo,
+[data-theme="dark"] .dashboard-brand {
+  color: #e7edf7;
+}
+
+[data-theme="dark"] .form-group label {
+  color: #d4dceb;
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .project-details-page input,
+[data-theme="dark"] .project-details-page select {
+  color: var(--color-ink);
+  background: #101927;
+  border-color: #344158;
+}
+
+[data-theme="dark"] .form-input::placeholder,
+[data-theme="dark"] .project-details-page input::placeholder {
+  color: #77869d;
+}
+
+[data-theme="dark"] .error-message {
+  color: #ff9a9f;
+  background: #351e29;
+  border-color: #61323d;
+}
+
+[data-theme="dark"] .success-message {
+  color: #87ddb0;
+  background: #173328;
+  border-color: #285841;
+}
+
+[data-theme="dark"] .dashboard-navbar {
+  background: rgba(17, 26, 40, 0.94);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .navbar-user-actions .user-details h3 {
+  color: var(--color-ink);
+}
+
+[data-theme="dark"] .btn-logout,
+[data-theme="dark"] .project-form .btn-cancel,
+[data-theme="dark"] .project-card-footer .btn-edit,
+[data-theme="dark"] .project-card-footer .btn-delete,
+[data-theme="dark"] .project-details-page .issue-actions button,
+[data-theme="dark"]
+  .project-details-page
+  .issue-edit-form
+  button[type="button"] {
+  color: #c1ccdc;
+  background: #1b2738;
+  border-color: #344158;
+}
+
+[data-theme="dark"] .btn-logout:hover,
+[data-theme="dark"] .project-form .btn-cancel:hover,
+[data-theme="dark"] .project-details-page .issue-actions button:hover,
+[data-theme="dark"]
+  .project-details-page
+  .issue-edit-form
+  button[type="button"]:hover {
+  color: var(--color-ink);
+  background: #26344a;
+  border-color: #43536e;
+}
+
+[data-theme="dark"] .btn-logout:hover {
+  color: #ff9a9f;
+  background: #351e29;
+  border-color: #61323d;
+}
+
+[data-theme="dark"] .project-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .project-card:hover,
+[data-theme="dark"] .project-details-page .issue-card:hover {
+  border-color: #43536e;
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .project-card-footer .btn-edit {
+  color: #a9bdff;
+  border-color: #3a4d76;
+}
+
+[data-theme="dark"] .project-card-footer .btn-edit:hover {
+  background: #263858;
+}
+
+[data-theme="dark"] .project-card-footer .btn-delete,
+[data-theme="dark"] .project-details-page .issue-actions button:last-child {
+  color: #ff9a9f;
+  background: #291d29;
+  border-color: #61323d;
+}
+
+[data-theme="dark"] .project-card-footer .btn-delete:hover:not(:disabled),
+[data-theme="dark"]
+  .project-details-page
+  .issue-actions
+  button:last-child:hover:not(:disabled) {
+  color: #fff;
+  background: #a92f43;
+  border-color: #a92f43;
+}
+
+[data-theme="dark"] .empty-state {
+  background: var(--color-surface);
+  border-color: #43516a;
+}
+
+[data-theme="dark"] .empty-state h3 {
+  color: var(--color-ink);
+}
+
+[data-theme="dark"] .project-header,
+[data-theme="dark"] .project-details-section {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .project-details-page .issue-card {
+  background: #111a28;
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .theme-toggle {
+  color: #c1ccdc;
+  background: #1b2738;
+  border-color: #344158;
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  color: #b7c8ff;
+  background: #263858;
+  border-color: #435987;
 }
