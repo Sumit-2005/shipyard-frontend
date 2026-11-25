@@ -591,6 +591,50 @@ a {
   overflow-wrap: anywhere;
 }
 
+.project-issue-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.project-issue-count {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 100px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  background: #f7f9fd;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+}
+
+.project-issue-count span {
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.project-issue-count strong {
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.project-issue-count-message {
+  margin: 14px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.project-issue-count-message.is-error {
+  color: #b42332;
+}
+
 .project-card-footer {
   display: flex;
   align-items: center;
@@ -1261,6 +1305,15 @@ a {
   background: var(--color-surface);
   border-color: var(--color-border);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .project-issue-count {
+  background: #101927;
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .project-issue-count-message.is-error {
+  color: #ff9a9f;
 }
 
 [data-theme="dark"] .project-card:hover,
