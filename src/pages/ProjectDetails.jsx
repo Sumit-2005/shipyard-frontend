@@ -10,6 +10,8 @@ import {
 import { useState } from "react";
 import { ThemeToggle } from "../context/ThemeContext";
 
+const ISSUE_STATUSES = ["Open", "In Progress", "Closed"];
+
 function ProjectDetails() {
   const [label, setLabel] = useState("");
   const [priority, setPriority] = useState(1);
@@ -20,6 +22,8 @@ function ProjectDetails() {
   const [editLabel, setEditLabel] = useState("");
   const [editPriority, setEditPriority] = useState(1);
   const [editStatus, setEditStatus] = useState("Open");
+  const [draggedIssueId, setDraggedIssueId] = useState(null);
+  const [dragOverStatus, setDragOverStatus] = useState(null);
 
   const { projectId } = useParams({
     strict: false,
@@ -126,6 +130,35 @@ function ProjectDetails() {
     });
   }
 
+  function moveIssue(issue, nextStatus) {
+    if (updateIssueMutation.isPending || issue.status === nextStatus) {
+      return;
+    }
+
+    updateIssueMutation.mutate({
+      id: issue.id,
+      issueData: {
+        label: issue.label,
+        priority: issue.priority,
+        status: nextStatus,
+        project_id: Number(projectId),
+      },
+    });
+  }
+
+  function handleIssueDrop(e, nextStatus) {
+    e.preventDefault();
+    setDragOverStatus(null);
+
+    const issue = issues.find(
+      (item) => String(item.id) === e.dataTransfer.getData("text/plain"),
+    );
+
+    if (issue) {
+      moveIssue(issue, nextStatus);
+    }
+  }
+
   const project = projectQuery.data;
   const issues = issuesQuery.data;
 
@@ -179,83 +212,164 @@ function ProjectDetails() {
         </section>
         <section className="project-details-section">
           <h2>Issues</h2>
-
-          {issues.length === 0 ? (
-            <p className="section-message">No issues found for this project.</p>
-          ) : (
-            <div className="issue-list">
-              {issues.map((issue) => (
-                <div className="issue-card" key={issue.id}>
-                  {editingIssueId === issue.id ? (
-                    <form
-                      className="issue-edit-form"
-                      onSubmit={handleUpdateIssue}
-                    >
-                      <input
-                        type="text"
-                        value={editLabel}
-                        onChange={(e) => setEditLabel(e.target.value)}
-                      />
-
-                      <select
-                        value={editPriority}
-                        onChange={(e) =>
-                          setEditPriority(Number(e.target.value))
-                        }
-                      >
-                        <option value={1}>High</option>
-                        <option value={2}>Medium</option>
-                        <option value={3}>Low</option>
-                      </select>
-
-                      <select
-                        value={editStatus}
-                        onChange={(e) => setEditStatus(e.target.value)}
-                      >
-                        <option value="Open">Open</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Closed">Closed</option>
-                      </select>
-
-                      <button
-                        type="submit"
-                        disabled={updateIssueMutation.isPending}
-                      >
-                        {updateIssueMutation.isPending ? "Saving..." : "Save"}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setEditingIssueId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </form>
-                  ) : (
-                    <>
-                      <div className="issue-detail">
-                        <h3>{issue.label}</h3>
-                        <p>Status: {issue.status}</p>
-                        <p>Priority: {issue.priority}</p>
-                      </div>
-                      <div className="issue-actions">
-                        <button onClick={() => handleEditIssue(issue)}>
-                          Edit
-                        </button>
-
-                        <button
-                          onClick={() => handleDeleteIssue(issue.id)}
-                          disabled={deleteIssueMutation.isPending}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
+          <p className="kanban-help">
+            Drag issues between columns or use the status selector to move them.
+          </p>
+          {updateIssueMutation.isError && (
+            <p className="error-message" role="alert">
+              Could not update issue status: {updateIssueMutation.error.message}
+            </p>
           )}
+          <div className="kanban-board">
+            {ISSUE_STATUSES.map((columnStatus) => {
+              const columnIssues = issues.filter(
+                (issue) => issue.status === columnStatus,
+              );
+
+              return (
+                <section
+                  className={`kanban-column${dragOverStatus === columnStatus ? " is-drag-over" : ""}`}
+                  key={columnStatus}
+                  aria-label={`${columnStatus} issues`}
+                  onDragOver={(e) => {
+                    if (!updateIssueMutation.isPending) {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                      setDragOverStatus(columnStatus);
+                    }
+                  }}
+                  onDragLeave={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      setDragOverStatus(null);
+                    }
+                  }}
+                  onDrop={(e) => handleIssueDrop(e, columnStatus)}
+                >
+                  <div className="kanban-column-header">
+                    <h3>{columnStatus}</h3>
+                    <span className="kanban-count">{columnIssues.length}</span>
+                  </div>
+
+                  <div className="kanban-column-content">
+                    {columnIssues.length === 0 ? (
+                      <p className="kanban-empty">No issues</p>
+                    ) : (
+                      columnIssues.map((issue) => (
+                        <article
+                          className={`issue-card kanban-card${draggedIssueId === issue.id ? " is-dragging" : ""}`}
+                          key={issue.id}
+                          draggable={
+                            editingIssueId !== issue.id &&
+                            !updateIssueMutation.isPending
+                          }
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData(
+                              "text/plain",
+                              String(issue.id),
+                            );
+                            e.dataTransfer.effectAllowed = "move";
+                            setDraggedIssueId(issue.id);
+                          }}
+                          onDragEnd={() => {
+                            setDraggedIssueId(null);
+                            setDragOverStatus(null);
+                          }}
+                        >
+                          {editingIssueId === issue.id ? (
+                            <form
+                              className="issue-edit-form"
+                              onSubmit={handleUpdateIssue}
+                            >
+                              <input
+                                type="text"
+                                value={editLabel}
+                                onChange={(e) => setEditLabel(e.target.value)}
+                              />
+
+                              <select
+                                value={editPriority}
+                                onChange={(e) =>
+                                  setEditPriority(Number(e.target.value))
+                                }
+                              >
+                                <option value={1}>High</option>
+                                <option value={2}>Medium</option>
+                                <option value={3}>Low</option>
+                              </select>
+
+                              <select
+                                value={editStatus}
+                                onChange={(e) => setEditStatus(e.target.value)}
+                              >
+                                {ISSUE_STATUSES.map((issueStatus) => (
+                                  <option key={issueStatus} value={issueStatus}>
+                                    {issueStatus}
+                                  </option>
+                                ))}
+                              </select>
+
+                              <button
+                                type="submit"
+                                disabled={updateIssueMutation.isPending}
+                              >
+                                {updateIssueMutation.isPending
+                                  ? "Saving..."
+                                  : "Save"}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setEditingIssueId(null)}
+                              >
+                                Cancel
+                              </button>
+                            </form>
+                          ) : (
+                            <>
+                              <div className="issue-detail">
+                                <h3>{issue.label}</h3>
+                                <p>Priority: {issue.priority}</p>
+                              </div>
+                              <div className="issue-actions">
+                                <select
+                                  className="kanban-status-select"
+                                  aria-label={`Move ${issue.label} to status`}
+                                  value={issue.status}
+                                  onChange={(e) =>
+                                    moveIssue(issue, e.target.value)
+                                  }
+                                  disabled={updateIssueMutation.isPending}
+                                >
+                                  {ISSUE_STATUSES.map((issueStatus) => (
+                                    <option
+                                      key={issueStatus}
+                                      value={issueStatus}
+                                    >
+                                      {issueStatus}
+                                    </option>
+                                  ))}
+                                </select>
+                                <button onClick={() => handleEditIssue(issue)}>
+                                  Edit
+                                </button>
+
+                                <button
+                                  onClick={() => handleDeleteIssue(issue.id)}
+                                  disabled={deleteIssueMutation.isPending}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </article>
+                      ))
+                    )}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </section>
       </main>
     </div>
