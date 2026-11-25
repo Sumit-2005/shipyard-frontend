@@ -154,7 +154,6 @@ function Dashboard() {
             <div className="user-details">
               <p className="user-label">SIGNED IN AS</p>
               <h3>{user.email}</h3>
-              <p>User ID: {user.id}</p>
             </div>
           </div>
 
