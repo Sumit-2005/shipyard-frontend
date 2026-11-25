@@ -780,6 +780,19 @@ a {
   gap: 10px;
 }
 
+.project-details-page .issue-field {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.project-details-page .issue-form {
+  align-items: end;
+}
+
 .project-details-page .issue-edit-form {
   grid-template-columns: minmax(0, 2fr) repeat(2, minmax(120px, 1fr)) auto auto;
 }

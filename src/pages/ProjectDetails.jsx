@@ -187,20 +187,26 @@ function ProjectDetails() {
               onChange={(e) => setLabel(e.target.value)}
             />
 
-            <select
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value))}
-            >
-              <option value={1}>High</option>
-              <option value={2}>Medium</option>
-              <option value={3}>Low</option>
-            </select>
+            <label className="issue-field">
+              <span>Priority</span>
+              <select
+                value={priority}
+                onChange={(e) => setPriority(Number(e.target.value))}
+              >
+                <option value={1}>High</option>
+                <option value={2}>Medium</option>
+                <option value={3}>Low</option>
+              </select>
+            </label>
 
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Closed">Closed</option>
-            </select>
+            <label className="issue-field">
+              <span>Status</span>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </label>
 
             <button type="submit" disabled={createIssueMutation.isPending}>
               {createIssueMutation.isPending ? "Creating..." : "Create Issue"}
