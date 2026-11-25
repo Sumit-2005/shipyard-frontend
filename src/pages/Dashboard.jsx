@@ -1,8 +1,14 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useQueries,
+} from "@tanstack/react-query";
 
 import { useNavigate, Link } from "@tanstack/react-router";
 import { apiRequest } from "../api/client";
+import { getIssues } from "../api/issues";
 import { createProject, updateProject, deleteProject } from "../api/projects";
 import { useAuth } from "../context/AuthContext";
 import { ThemeToggle } from "../context/ThemeContext";
@@ -27,6 +33,13 @@ function Dashboard() {
   const projectsQuery = useQuery({
     queryKey: ["projects"],
     queryFn: () => apiRequest("/projects/"),
+  });
+
+  const projectIssueQueries = useQueries({
+    queries: (projectsQuery.data ?? []).map((project) => ({
+      queryKey: ["issues", String(project.id)],
+      queryFn: () => getIssues(project.id),
+    })),
   });
 
   // Create project mutation
@@ -257,53 +270,98 @@ function Dashboard() {
             </div>
           ) : (
             <div className="project-grid">
-              {projects.map((project) => (
-                <div className="project-card" key={project.id}>
-                  <div className="project-card-top">
-                    <span className="project-id">
-                      PROJECT ID - {project.id}
-                    </span>
-                    <span className="project-indicator"></span>
-                  </div>
+              {projects.map((project, index) => {
+                const issueQuery = projectIssueQueries[index];
 
-                  <h3>{project.overview}</h3>
+                return (
+                  <div className="project-card" key={project.id}>
+                    <div className="project-card-top">
+                      <span className="project-id">
+                        PROJECT ID - {project.id}
+                      </span>
+                      <span className="project-indicator"></span>
+                    </div>
 
-                  <p className="project-description">{project.deployment}</p>
+                    <h3>{project.overview}</h3>
 
-                  <div className="project-card-footer">
-                    <Link
-                      to="/projects/$projectId"
-                      params={{ projectId: String(project.id) }}
-                      style={{
-                        textDecoration: "none",
-                        color: "black",
-                        fontSize: "12px",
-                      }}
-                    >
-                      View Project →
-                    </Link>
+                    <p className="project-description">{project.deployment}</p>
 
-                    <div className="project-actions">
-                      <button
-                        className="btn btn-edit"
-                        type="button"
-                        onClick={() => handleEditProject(project)}
+                    {issueQuery.isPending && (
+                      <p className="project-issue-count-message" role="status">
+                        Loading issue counts...
+                      </p>
+                    )}
+                    {issueQuery.isError && (
+                      <p
+                        className="project-issue-count-message is-error"
+                        role="alert"
                       >
-                        Edit
-                      </button>
-
-                      <button
-                        className="btn btn-delete"
-                        type="button"
-                        onClick={() => handleDeleteProject(project)}
-                        disabled={deleteProjectMutation.isPending}
+                        Issue counts unavailable: {issueQuery.error.message}
+                      </p>
+                    )}
+                    {issueQuery.isSuccess && (
+                      <div
+                        className="project-issue-counts"
+                        aria-label="Issue status counts"
                       >
-                        Delete
-                      </button>
+                        <div className="project-issue-count">
+                          <span>Open</span>
+                          <strong>
+                            {
+                              issueQuery.data.filter(
+                                (issue) => issue.status === "Open",
+                              ).length
+                            }
+                          </strong>
+                        </div>
+                        <div className="project-issue-count">
+                          <span>In Progress</span>
+                          <strong>
+                            {
+                              issueQuery.data.filter(
+                                (issue) => issue.status === "In Progress",
+                              ).length
+                            }
+                          </strong>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="project-card-footer">
+                      <Link
+                        to="/projects/$projectId"
+                        params={{ projectId: String(project.id) }}
+                        style={{
+                          textDecoration: "none",
+                          color: "black",
+                          fontSize: "12px",
+                        }}
+                      >
+                        View Project →
+                      </Link>
+
+                      <div className="project-actions">
+                        <button
+                          className="btn btn-edit"
+                          type="button"
+                          onClick={() => handleEditProject(project)}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="btn btn-delete"
+                          type="button"
+                          onClick={() => handleDeleteProject(project)}
+                          disabled={deleteProjectMutation.isPending}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
