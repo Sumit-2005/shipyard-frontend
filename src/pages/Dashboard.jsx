@@ -6,17 +6,13 @@ import {
   useQueries,
 } from "@tanstack/react-query";
 
-import { useNavigate, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { apiRequest } from "../api/client";
 import { getIssues } from "../api/issues";
 import { createProject, updateProject, deleteProject } from "../api/projects";
-import { useAuth } from "../context/AuthContext";
-import { ThemeToggle } from "../context/ThemeContext";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
   const [overview, setOverview] = useState("");
   const [deployment, setDeployment] = useState("");
   const [editingProjectId, setEditingProjectId] = useState(null);
@@ -80,11 +76,6 @@ function Dashboard() {
     },
   });
 
-  function handleLogout() {
-    logout();
-    navigate({ to: "/login" });
-  }
-
   function handleEditProject(project) {
     setEditingProjectId(project.id);
     setOverview(project.overview);
@@ -139,29 +130,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <nav className="dashboard-navbar">
-        <h1 className="dashboard-brand">
-          Shipyard<span>.</span>
-        </h1>
-
-        <div className="navbar-user-actions">
-          <ThemeToggle />
-          <div className="user-info-card">
-            <div className="user-avatar">
-              {user.email.charAt(0).toUpperCase()}
-            </div>
-
-            <div className="user-details">
-              <p className="user-label">SIGNED IN AS</p>
-              <h3>{user.email}</h3>
-            </div>
-          </div>
-
-          <button className="btn btn-logout" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
+      <Navbar email={user.email} />
 
       <main className="dashboard-content">
         <section className="dashboard-heading">
@@ -283,7 +252,18 @@ function Dashboard() {
 
                     <h3>{project.overview}</h3>
 
-                    <p className="project-description">{project.deployment}</p>
+                    {project.deployment ? (
+                      <p className="project-description">
+                        <a
+                          className="deployment-link"
+                          href={project.deployment}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {project.deployment}
+                        </a>
+                      </p>
+                    ) : null}
 
                     {issueQuery.isPending && (
                       <p className="project-issue-count-message" role="status">

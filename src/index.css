@@ -116,6 +116,10 @@ a {
   letter-spacing: -1.4px;
 }
 
+.dashboard-brand {
+  text-decoration: none;
+}
+
 .auth-logo {
   margin-bottom: 36px;
 }
@@ -589,6 +593,16 @@ a {
   font-size: 13px;
   line-height: 1.6;
   overflow-wrap: anywhere;
+}
+
+.deployment-link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.deployment-link:hover {
+  color: var(--color-primary-hover);
 }
 
 .project-issue-counts {

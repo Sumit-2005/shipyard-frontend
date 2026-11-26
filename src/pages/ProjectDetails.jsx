@@ -8,7 +8,8 @@ import {
   updateIssue,
 } from "../api/issues";
 import { useState } from "react";
-import { ThemeToggle } from "../context/ThemeContext";
+import { apiRequest } from "../api/client";
+import Navbar from "../components/Navbar";
 
 const ISSUE_STATUSES = ["Open", "In Progress", "Closed"];
 
@@ -32,6 +33,11 @@ function ProjectDetails() {
   const projectQuery = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => getProject(projectId),
+  });
+
+  const userQuery = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: () => apiRequest("/users/me"),
   });
 
   const issuesQuery = useQuery({
@@ -164,14 +170,29 @@ function ProjectDetails() {
 
   return (
     <div className="project-details-page">
+      <Navbar
+        email={
+          userQuery.data?.email ??
+          (userQuery.isError ? "Account unavailable" : "Loading account...")
+        }
+      />
       <main className="project-details-content">
-        <div className="project-details-toolbar">
-          <ThemeToggle />
-        </div>
         <div className="project-header">
           <h1 className="project-title">{project.overview}</h1>
 
-          <p className="project-deployment">Deployment: {project.deployment}</p>
+          {project.deployment ? (
+            <p className="project-deployment">
+              Deployment:{" "}
+              <a
+                className="deployment-link"
+                href={project.deployment}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {project.deployment}
+              </a>
+            </p>
+          ) : null}
 
           <p className="project-detail-id">Project ID: {project.id}</p>
         </div>
